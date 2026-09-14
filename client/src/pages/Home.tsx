@@ -1,33 +1,43 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { ArrowUpRight, Bell, CalendarDays, Check, CircleUserRound, GraduationCap, Menu, Sparkles, Users } from "lucide-react";
+import { Link } from "wouter";
+import AppShell, { SectionLabel } from "@/components/AppShell";
+import { AnnouncementCard } from "@/components/PortalComponents";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Card, CardContent } from "@/components/ui/card";
+import { useAnnouncements } from "@/hooks/useAnnouncements";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { data: announcements = [] } = useAnnouncements();
+  return <AppShell>
+    <section className="relative overflow-hidden border-b border-border/70">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_15%,rgba(213,235,218,0.85),transparent_36%),radial-gradient(circle_at_85%_20%,rgba(255,239,190,0.55),transparent_28%)]" />
+      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:px-10 lg:py-28">
+        <div className="animate-rise-in">
+          <div className="mb-6 flex items-center gap-3"><span className="grid size-9 place-items-center rounded-full bg-[#d6ecdc] text-primary"><Sparkles className="size-4" /></span><span className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-primary">Your campus, in one place</span></div>
+          <h1 className="max-w-3xl text-5xl font-extrabold leading-[0.98] tracking-[-0.075em] sm:text-7xl">Make your next <span className="relative inline-block text-primary">chapter<span className="absolute -bottom-1 left-0 h-1.5 w-full rounded-full bg-accent/75 sm:h-2" /></span> count.</h1>
+          <p className="mt-7 max-w-xl text-lg leading-8 text-muted-foreground">CampusConnect is the simple way to find your people, keep up with what is happening, and turn campus time into meaningful momentum.</p>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"><Link href="/register"><Button className="h-12 rounded-full bg-primary px-6 text-sm font-extrabold shadow-[0_10px_28px_rgba(12,107,88,0.22)] hover:bg-[#0a5d4d]">Create your account <ArrowUpRight className="ml-2 size-4" /></Button></Link><Link href="/announcements" className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-bold text-foreground transition-colors hover:bg-white/60">Explore announcements <span className="font-mono text-xs text-muted-foreground">→</span></Link></div>
+          <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-muted-foreground"><span className="flex items-center gap-2"><Check className="size-4 text-primary" />Personalized dashboard</span><span className="flex items-center gap-2"><Check className="size-4 text-primary" />One home for campus life</span></div>
+        </div>
+        <div className="relative mx-auto w-full max-w-[510px] animate-rise-in [animation-delay:120ms]">
+          <div className="absolute -right-2 -top-7 z-10 flex animate-drift items-center gap-3 rounded-2xl border border-white/80 bg-white/90 px-4 py-3 shadow-[0_18px_45px_rgba(40,70,54,0.12)] backdrop-blur-sm sm:-right-9"><span className="grid size-9 place-items-center rounded-xl bg-[#fff3c9] text-[#926f00]"><Bell className="size-4" /></span><span><span className="block text-xs font-extrabold">Fresh updates</span><span className="block text-[10px] text-muted-foreground">Waiting for you</span></span></div>
+          <div className="overflow-hidden rounded-[28px] border border-white/80 bg-[#d9ecdf] p-3 shadow-[0_25px_70px_rgba(32,78,57,0.15)]"><div className="overflow-hidden rounded-[20px] bg-[#f8fbf6]"><div className="flex items-center justify-between border-b border-border/60 px-5 py-4"><div className="flex items-center gap-2"><span className="size-2 rounded-full bg-primary" /><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">CampusConnect</span></div><Menu className="size-4 text-muted-foreground" /></div><div className="p-5 sm:p-7"><div className="flex items-end justify-between"><div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Tuesday, 14 October</p><h2 className="mt-2 text-2xl font-extrabold tracking-[-0.05em]">Good morning, Alex.</h2></div><span className="grid size-10 place-items-center rounded-full bg-[#f1ddb1] text-[#735617]"><CircleUserRound className="size-5" /></span></div><div className="mt-7 grid grid-cols-3 gap-2"><div className="rounded-2xl bg-[#e6f1e9] p-3"><span className="font-mono text-[9px] uppercase tracking-[0.12em] text-primary">Events</span><p className="mt-2 text-xl font-extrabold">04</p></div><div className="rounded-2xl bg-[#fff5d9] p-3"><span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#90701a]">Clubs</span><p className="mt-2 text-xl font-extrabold">08</p></div><div className="rounded-2xl bg-[#e8f0f3] p-3"><span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#477083]">Points</span><p className="mt-2 text-xl font-extrabold">248</p></div></div><div className="mt-5 rounded-2xl border border-border/70 bg-white p-4"><div className="flex items-center justify-between"><span className="text-xs font-extrabold">Your next thing</span><span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">Today</span></div><div className="mt-4 flex gap-3"><span className="mt-1 size-2.5 shrink-0 rounded-full bg-accent" /><div><p className="text-sm font-extrabold">Design Society meetup</p><p className="mt-1 text-xs text-muted-foreground">6:00 PM · Innovation Lab</p></div></div></div></div></div></div>
+          <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-2xl border border-white/80 bg-white/95 px-4 py-3 shadow-[0_18px_45px_rgba(40,70,54,0.11)]"><span className="grid size-9 place-items-center rounded-xl bg-[#e8f0f3] text-[#477083]"><Users className="size-4" /></span><span><span className="block text-xs font-extrabold">2,400+ students</span><span className="block text-[10px] text-muted-foreground">already connected</span></span></div>
+        </div>
+      </div>
+    </section>
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-20">
+      <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end"><div><SectionLabel>Why CampusConnect</SectionLabel><h2 className="max-w-md text-3xl font-extrabold leading-tight tracking-[-0.055em] sm:text-4xl">The little things that make campus feel like yours.</h2></div><p className="max-w-lg text-base leading-7 text-muted-foreground lg:justify-self-end">From the first club you join to the last event before graduation, keep the signal and skip the noise.</p></div>
+      <div className="mt-10 grid gap-4 md:grid-cols-3"><FeatureCard icon={<CalendarDays />} number="01" title="Stay in the loop" description="See the announcements and events that matter to your student life." /><FeatureCard icon={<Users />} number="02" title="Find your people" description="Discover clubs, communities, and campus moments built around shared interests." /><FeatureCard icon={<GraduationCap />} number="03" title="Build your story" description="Track the activities, connections, and milestones that shape your journey." /></div>
+    </section>
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+    <section className="bg-[#eaf2ea] px-5 py-16 sm:px-8 lg:px-10 lg:py-20"><div className="mx-auto max-w-7xl"><div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><SectionLabel>Latest from campus</SectionLabel><h2 className="text-3xl font-extrabold tracking-[-0.055em] sm:text-4xl">The noticeboard, refreshed.</h2></div><Link href="/announcements" className="inline-flex items-center gap-2 text-sm font-extrabold text-primary hover:underline">View all announcements <ArrowUpRight className="size-4" /></Link></div><div className="mt-9 grid gap-4 md:grid-cols-3">{announcements.slice(0, 3).map(item => <AnnouncementCard item={item} key={item.id} compact />)}</div></div></section>
+
+    <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-20"><Card className="overflow-hidden border-0 bg-primary text-primary-foreground shadow-[0_20px_50px_rgba(12,107,88,0.18)]"><CardContent className="relative grid gap-10 p-7 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center lg:p-14"><div className="absolute -right-16 -top-24 size-64 rounded-full border-[30px] border-white/10" /><div><div className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-[#b9e1c4]">Your next chapter starts here</div><h2 className="max-w-2xl text-3xl font-extrabold leading-tight tracking-[-0.055em] sm:text-4xl">A better way to feel at home on campus.</h2><p className="mt-4 max-w-xl text-sm leading-7 text-[#c9e2d0]">Create your account in less than a minute and start making the most of your university experience.</p></div><Link href="/register"><Button className="h-12 rounded-full bg-accent px-6 font-extrabold text-accent-foreground hover:bg-[#eab333]">Get started <ArrowUpRight className="ml-2 size-4" /></Button></Link></CardContent></Card></section>
+  </AppShell>;
+}
+
+function FeatureCard({ icon, number, title, description }: { icon: React.ReactNode; number: string; title: string; description: string }) {
+  return <Card className="group border-0 bg-card shadow-[0_12px_35px_rgba(36,66,53,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(36,66,53,0.1)]"><CardContent className="p-6"><div className="flex items-start justify-between"><span className="grid size-11 place-items-center rounded-2xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">{icon}</span><span className="font-mono text-[11px] text-muted-foreground">{number}</span></div><h3 className="mt-8 text-lg font-extrabold tracking-[-0.035em]">{title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p></CardContent></Card>;
 }
