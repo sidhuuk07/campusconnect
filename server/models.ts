@@ -4,6 +4,7 @@ export type StudentDocument = Document & {
   name: string;
   email: string;
   password: string;
+  role: "student" | "faculty" | "admin";
   registrationDate: Date;
 };
 
@@ -18,8 +19,8 @@ export type TaskDocument = Document & {
 const studentSchema = new Schema<StudentDocument>({
   name: { type: String, required: true, trim: true, minlength: 2, maxlength: 80 },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: /^\S+@\S+\.\S+$/ },
-  // Lab starter only: replace with a password hash before production use.
   password: { type: String, required: true, minlength: 8, select: false },
+  role: { type: String, enum: ["student", "faculty", "admin"], default: "student" },
   registrationDate: { type: Date, default: Date.now },
 });
 
