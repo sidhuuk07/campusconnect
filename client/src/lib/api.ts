@@ -35,4 +35,9 @@ export const api = {
     update: (id: string, body: Partial<Omit<Task, "id" | "createdDate">>) => request<Task>(`/api/tasks/${id}`, { method: "PUT", body: JSON.stringify(body) }),
     remove: (id: string) => request<null>(`/api/tasks/${id}`, { method: "DELETE" }),
   },
+  management: {
+    overview: () => request<{ students: Student[]; tasks: Task[]; summary: { students: number; tasks: number; completedTasks: number } }>("/api/management/overview"),
+    updateRole: (id: string, role: Student["role"]) => request<Student>(`/api/management/students/${id}/role`, { method: "PUT", body: JSON.stringify({ role }) }),
+    assignTask: (id: string, assignedUser: string) => request<Task>(`/api/management/tasks/${id}/assignment`, { method: "PUT", body: JSON.stringify({ assignedUser }) }),
+  },
 };

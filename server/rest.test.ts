@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { afterEach, describe, expect, it } from "vitest";
 import { registerRestApi } from "./rest";
+import { createToken } from "./auth";
 
 const servers: ReturnType<typeof createServer>[] = [];
 async function startApi() {
@@ -25,5 +26,13 @@ describe("CampusConnect REST API", () => {
     const updatedResponse = await fetch(`${base}/api/tasks/${id}`, { method: "PUT", headers, body: JSON.stringify({ status: "completed" }) }); expect(updatedResponse.status).toBe(200); expect((await updatedResponse.json()).data.status).toBe("completed");
     const listResponse = await fetch(`${base}/api/tasks`, { headers }); expect((await listResponse.json()).data.some((task: { id: string }) => task.id === id)).toBe(true);
     const deletedResponse = await fetch(`${base}/api/tasks/${id}`, { method: "DELETE", headers }); expect(deletedResponse.status).toBe(200);
+  });
+  it("allows faculty management overview but reserves role changes for admins", async () => {
+    const base = await startApi();
+    const facultyToken = await createToken({ id: "faculty-1", email: "faculty@example.com", name: "Faculty", role: "faculty" });
+    const facultyResponse = await fetch(`${base}/api/management/overview`, { headers: { Authorization: `Bearer ${facultyToken}` } });
+    expect(facultyResponse.status).toBe(200);
+    const roleResponse = await fetch(`${base}/api/management/students/missing/role`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${facultyToken}` }, body: JSON.stringify({ role: "admin" }) });
+    expect(roleResponse.status).toBe(403);
   });
 });

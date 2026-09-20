@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { connectMongo, serializeDocument, StudentModel, TaskModel } from "./models";
-import { createToken, requireAuth, type AuthUser } from "./auth";
+import { createToken, requireAuth, requireRole, type AuthUser } from "./auth";
 
 type Student = { id: string; name: string; email: string; role: AuthUser["role"]; registrationDate: string };
 type Task = { id: string; title: string; description: string; status: "todo" | "in-progress" | "completed"; assignedUser?: string; createdDate: string };
@@ -149,5 +149,39 @@ export function registerRestApi(app: Express) {
     if (index < 0) return sendError(res, 404, "Task not found.");
     memoryTasks.splice(index, 1);
     return res.json({ success: true, message: "Task deleted successfully." });
+  });
+
+  app.get("/api/management/overview", requireAuth, requireRole("faculty", "admin"), async (_req, res) => {
+    if (StudentModel.db.readyState === 1) {
+      const [students, tasks, completedTasks] = await Promise.all([StudentModel.find().sort({ registrationDate: -1 }).lean(), TaskModel.find().sort({ createdDate: -1 }).lean(), TaskModel.countDocuments({ status: "completed" })]);
+      return res.json({ success: true, data: { students: students.map(student => serializeDocument(student as unknown as Record<string, unknown>)), tasks: tasks.map(task => serializeDocument(task as unknown as Record<string, unknown>)), summary: { students: students.length, tasks: tasks.length, completedTasks } } });
+    }
+    return res.json({ success: true, data: { students: memoryStudents, tasks: memoryTasks, summary: { students: memoryStudents.length, tasks: memoryTasks.length, completedTasks: memoryTasks.filter(task => task.status === "completed").length } } });
+  });
+
+  app.put("/api/management/students/:id/role", requireAuth, requireRole("admin"), async (req, res) => {
+    const role = req.body?.role;
+    if (!["student", "faculty", "admin"].includes(role)) return sendError(res, 400, "Role must be student, faculty, or admin.");
+    if (StudentModel.db.readyState === 1) {
+      const updated = await StudentModel.findByIdAndUpdate(getId(req), { role }, { new: true, runValidators: true }).lean();
+      return updated ? res.json({ success: true, message: "User role updated successfully.", data: serializeDocument(updated as unknown as Record<string, unknown>) }) : sendError(res, 404, "Student not found.");
+    }
+    const index = memoryStudents.findIndex(student => student.id === getId(req));
+    if (index < 0) return sendError(res, 404, "Student not found.");
+    memoryStudents[index] = { ...memoryStudents[index], role } as Student;
+    return res.json({ success: true, message: "User role updated successfully.", data: memoryStudents[index] });
+  });
+
+  app.put("/api/management/tasks/:id/assignment", requireAuth, requireRole("faculty", "admin"), async (req, res) => {
+    const assignedUser = typeof req.body?.assignedUser === "string" ? req.body.assignedUser.trim() : "";
+    if (!assignedUser) return sendError(res, 400, "An assignee is required.");
+    if (TaskModel.db.readyState === 1) {
+      const updated = await TaskModel.findByIdAndUpdate(getId(req), { assignedUser }, { new: true, runValidators: true }).lean();
+      return updated ? res.json({ success: true, message: "Task assignment updated successfully.", data: serializeDocument(updated as unknown as Record<string, unknown>) }) : sendError(res, 404, "Task not found.");
+    }
+    const index = memoryTasks.findIndex(task => task.id === getId(req));
+    if (index < 0) return sendError(res, 404, "Task not found.");
+    memoryTasks[index] = { ...memoryTasks[index], assignedUser };
+    return res.json({ success: true, message: "Task assignment updated successfully.", data: memoryTasks[index] });
   });
 }

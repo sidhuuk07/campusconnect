@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { Bell, CalendarDays, ChevronRight, LayoutDashboard, LogIn, Menu, Sparkles, X } from "lucide-react";
+import { Bell, CalendarDays, ChevronRight, LayoutDashboard, LogIn, Menu, Shield, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -9,6 +9,7 @@ const navItems = [
   { href: "/", label: "Home", icon: LayoutDashboard },
   { href: "/dashboard", label: "Dashboard", icon: Sparkles },
   { href: "/announcements", label: "Announcements", icon: Bell },
+  { href: "/management", label: "Management", icon: Shield },
 ];
 
 export function BrandMark() {

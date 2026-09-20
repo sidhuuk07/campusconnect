@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Announcements from "./pages/Announcements";
+import Management from "./pages/Management";
 
 function Router() {
   return <Switch>
@@ -17,6 +18,7 @@ function Router() {
     <Route path="/register" component={Register} />
     <Route path="/dashboard" component={Dashboard} />
     <Route path="/announcements" component={Announcements} />
+    <Route path="/management" component={Management} />
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />
   </Switch>;
